@@ -39,7 +39,7 @@ public class RealDateTimeFormatter : IDateTimeFormatter
         DateTime epoch = new DateTime (1951, 1, 1);
         DateTime target = epoch.AddSeconds (time);
         TimeSpan span = target - epoch;
-        return string.Format ("{1}{2}:{3}:{4}"
+        return string.Format ("{1}{2:D2}:{3:D2}:{4:D2}"
             ,days ? string.Format("Day {0} - ", span.Days) : ""
             ,span.Hours
             ,span.Minutes
@@ -54,7 +54,7 @@ public class RealDateTimeFormatter : IDateTimeFormatter
         DateTime epoch = new DateTime (1951, 1, 1);
         DateTime target = epoch.AddSeconds (time);
         TimeSpan span = target - epoch;
-        return string.Format ("{1}{2}:{3}:{4}"
+        return string.Format ("{1}{2:D2}:{3:D2}:{4:D2}"
             ,days ? string.Format("d {0}, ", span.Days) : ""
             ,span.Hours
             ,span.Minutes
@@ -102,7 +102,7 @@ public class RealDateTimeFormatter : IDateTimeFormatter
         DateTime epoch = new DateTime (1951, 1, 1);
         DateTime target = epoch.AddSeconds (time);
         TimeSpan span = target - epoch;
-        return string.Format ("{0}{1}{2}:{3}:{4}"
+        return string.Format ("{0}{1}{2:D2}:{3:D2}:{4:D2}"
             ,isNegativeTime ? "- " : (explicitPositive ? "+ " : "")
             ,span.Days
             ,span.Hours
@@ -177,7 +177,18 @@ public class RealDateTimeFormatter : IDateTimeFormatter
     }
     public string PrintDateCompact (double time, bool includeTime, bool includeSeconds = false)
     {
-        return "PrintDateCompact";
+        if (IsInvalidTime (time))
+            return InvalidTimeStr (time);
+
+        DateTime epoch = new DateTime (1951, 1, 1);
+        DateTime target = epoch.AddSeconds (time);
+
+        return string.Format("{0}-{1} {2}{3}"
+            ,target.Year
+            ,target.DayOfYear
+            ,includeTime ? string.Format("{0:D2}:{1:D2}", target.Hour, target.Minute) : ""
+            ,includeTime && includeSeconds ? string.Format(":{0:D2}", target.Second) : ""
+        );
     }
     public int Minute {
         get

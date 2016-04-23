@@ -124,10 +124,10 @@ public class RealDateTimeFormatter : IDateTimeFormatter
         TimeSpan span = target - epoch;
 
         return string.Format("{0}{1}{2}{3}"
-            ,span.Days > 0 ? string.Format("{0} {1}", span.Days, span.Days == 1 ? "year" : "years") : ""
-            ,span.Hours > 0 && includeTime ? string.Format("{0} {1}", span.Hours, span.Hours == 1 ? "hour" : "hours") : ""
-            ,span.Minutes > 0 ? string.Format("{0} {1}", span.Minutes, span.Minutes == 1 ? "minute" : "minutes") : ""
-            ,span.Seconds > 0 ? string.Format("{0} {1}", span.Seconds, span.Seconds == 1 ? "second" : "seconds") : ""
+            ,span.Days > 0 ? string.Format("{0} {1} ", span.Days, span.Days == 1 ? "year" : "years") : ""
+            ,span.Hours > 0 && includeTime ? string.Format("{0} {1} ", span.Hours, span.Hours == 1 ? "hour" : "hours") : ""
+            ,span.Minutes > 0 && includeTime ? string.Format("{0} {1} ", span.Minutes, span.Minutes == 1 ? "minute" : "minutes") : ""
+            ,span.Seconds > 0 && includeTime && includeSeconds ? string.Format("{0} {1}", span.Seconds, span.Seconds == 1 ? "second" : "seconds") : ""
         );
     }
     public string PrintDateDeltaCompact(double time, bool includeTime, bool includeSeconds, bool useAbs)
@@ -137,17 +137,17 @@ public class RealDateTimeFormatter : IDateTimeFormatter
         if (time < 0 && useAbs)
             time = Math.Abs (time);
         if (time == 0d)
-            return string.Format("0 {0}", includeTime ? (includeSeconds ? "s" : "m") : "d");
+            return string.Format("0{0}", includeTime ? (includeSeconds ? "s" : "m") : "d");
 
         DateTime epoch = new DateTime (1951, 1, 1);
         DateTime target = epoch.AddSeconds (time);
         TimeSpan span = target - epoch;
 
         return string.Format("{0}{1}{2}{3}"
-            ,span.Days > 0 ? string.Format("{0} {1}", span.Days, "y") : ""
-            ,span.Hours > 0 && includeTime ? string.Format("{0} {1}", span.Hours, "h") : ""
-            ,span.Minutes > 0 ? string.Format("{0} {1}", span.Minutes, "m") : ""
-            ,span.Seconds > 0 ? string.Format("{0} {1}", span.Seconds, "s") : ""
+            ,span.Days > 0 ? string.Format("{0}{1} ", span.Days, "d") : ""
+            ,span.Hours > 0 && includeTime ? string.Format("{0}{1} ", span.Hours, "h") : ""
+            ,span.Minutes > 0 && includeTime ? string.Format("{0}{1} ", span.Minutes, "m") : ""
+            ,span.Seconds > 0 && includeTime && includeSeconds ? string.Format("{0}{1}", span.Seconds, "s") : ""
         );
     }
     public string PrintDate (double time, bool includeTime, bool includeSeconds = false)

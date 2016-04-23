@@ -23,7 +23,7 @@ public class RealDateTimeFormatter : IDateTimeFormatter
         DateTime epoch = new DateTime (1951, 1, 1);
         DateTime target = epoch.AddSeconds (time);
         TimeSpan span = target - epoch;
-        return string.Format ("{2}{3}, {4}{5}, {6}{7}, {8}{9}"
+        return string.Format ("{0}{1}, {2}{3}, {4}{5}, {6}{7}"
             , span.Days, span.Days == 1 ? "day" : "days"
             , span.Hours, span.Hours == 1 ? "hour" : "hours"
             , span.Minutes, span.Minutes == 1 ? "minute" : "minutes"
@@ -39,7 +39,7 @@ public class RealDateTimeFormatter : IDateTimeFormatter
         DateTime epoch = new DateTime (1951, 1, 1);
         DateTime target = epoch.AddSeconds (time);
         TimeSpan span = target - epoch;
-        return string.Format ("{1}{2:D2}:{3:D2}:{4:D2}"
+        return string.Format ("{0}{1:D2}:{2:D2}:{3:D2}"
             ,days ? string.Format("Day {0} - ", span.Days) : ""
             ,span.Hours
             ,span.Minutes
@@ -54,7 +54,7 @@ public class RealDateTimeFormatter : IDateTimeFormatter
         DateTime epoch = new DateTime (1951, 1, 1);
         DateTime target = epoch.AddSeconds (time);
         TimeSpan span = target - epoch;
-        return string.Format ("{1}{2:D2}:{3:D2}:{4:D2}"
+        return string.Format ("{0}{1:D2}:{2:D2}:{3:D2}"
             ,days ? string.Format("d {0}, ", span.Days) : ""
             ,span.Hours
             ,span.Minutes

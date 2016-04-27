@@ -81,7 +81,7 @@ public class RealDateTimeFormatter : IDateTimeFormatter
         DateTime epoch = new DateTime (1951, 1, 1);
         DateTime target = epoch.AddSeconds (time);
         TimeSpan span = target - epoch;
-        return string.Format ("{0}{1}{2}:{3}:{4}"
+        return string.Format ("{0}{1}{2}{3}{4}"
             ,isNegativeTime ? "- " : (explicitPositive ? "+ " : "")
             ,valuesOfInterest >= 3 ? string.Format("{0}d, ", span.Days) : ""
             ,valuesOfInterest >= 2 ? string.Format("{0}h, ", span.Hours) : ""

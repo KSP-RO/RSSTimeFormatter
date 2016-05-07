@@ -54,8 +54,12 @@ public class RealDateTimeFormatter : IDateTimeFormatter
         DateTime epoch = new DateTime (1951, 1, 1);
         DateTime target = epoch.AddSeconds (time);
         TimeSpan span = target - epoch;
-        return string.Format ("{0}{1:D2}:{2:D2}:{3:D2}"
-            ,days ? string.Format("d {0}, ", span.Days) : ""
+        int dNum = span.Days;
+        int yNum = dNum / 365;
+        int subDays = dNum - yNum * 365;
+        return string.Format ("{0}{1}{2:D2}:{3:D2}:{4:D2}"
+            ,years ? string.Format("{0}y, ", yNum) : ""
+            ,days ? string.Format("{0}d, ", ((years && subDays != 0) ? subDays : dNum)) : ""
             ,span.Hours
             ,span.Minutes
             ,span.Seconds
@@ -83,10 +87,10 @@ public class RealDateTimeFormatter : IDateTimeFormatter
         TimeSpan span = target - epoch;
         return string.Format ("{0}{1}{2}{3}{4}"
             ,isNegativeTime ? "- " : (explicitPositive ? "+ " : "")
-            ,valuesOfInterest >= 3 ? string.Format("{0}d, ", span.Days) : ""
-            ,valuesOfInterest >= 2 ? string.Format("{0}h, ", span.Hours) : ""
-            ,valuesOfInterest >= 1 ? string.Format("{0}m, ", span.Minutes) : ""
-            ,valuesOfInterest >= 0 ? string.Format("{0}s, ", span.Seconds) : ""
+            ,(valuesOfInterest >= 3 && span.Days != 0) ? string.Format("{0}d, ", span.Days) : ""
+            ,(valuesOfInterest >= 2 && span.Hours != 0) ? string.Format("{0}h, ", span.Hours) : ""
+            ,(valuesOfInterest >= 1 && span.Minutes != 0) ? string.Format("{0}m, ", span.Minutes) : ""
+            ,valuesOfInterest >= 0 ? string.Format("{0}s", span.Seconds) : ""
         );
     }
     public string PrintTimeCompact (double time, bool explicitPositive)
@@ -104,7 +108,7 @@ public class RealDateTimeFormatter : IDateTimeFormatter
         TimeSpan span = target - epoch;
         return string.Format ("{0}{1}{2:D2}:{3:D2}:{4:D2}"
             ,isNegativeTime ? "- " : (explicitPositive ? "+ " : "")
-            ,span.Days
+            ,(span.Days != 0 ? span.Days.ToString() : "")
             ,span.Hours
             ,span.Minutes
             ,span.Seconds

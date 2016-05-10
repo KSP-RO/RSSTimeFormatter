@@ -19,11 +19,6 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
-    <CustomCommands>
-      <CustomCommands>
-        <Command type="AfterBuild" command="cp ${TargetFile} ${TargetDir}/../../../GameData/RSSDateTime/Plugins" />
-      </CustomCommands>
-    </CustomCommands>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>full</DebugType>
@@ -32,11 +27,6 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
-    <CustomCommands>
-      <CustomCommands>
-        <Command type="AfterBuild" command="cp ${TargetFile} ${TargetDir}/../../../GameData/RSSDateTime/Plugins" />
-      </CustomCommands>
-    </CustomCommands>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System">
@@ -63,4 +53,5 @@
   <ItemGroup>
     <None Include="EmptyClass.cs" />
   </ItemGroup>
+  <Import Project="custom.targets" />
 </Project>

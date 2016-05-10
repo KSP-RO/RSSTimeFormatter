@@ -1,0 +1,9 @@
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<ItemGroup>
+  <FilesToCopy Include="$(OutputPath)\RSStimeFormatter.dll" />
+</ItemGroup>
+<Target Name="AfterBuild">
+  <Message Text="This is the AfterBuild target" Importance="normal"/>
+  <Copy SourceFiles="@(FilesToCopy)" DestinationFolder="..\GameData\RSSDateTime\Plugins\" />
+</Target>
+</Project>

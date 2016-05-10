@@ -22,14 +22,13 @@
     <CustomCommands>
       <CustomCommands>
         <Command type="AfterBuild" command="cp ${TargetFile} ${TargetDir}/../../../GameData/RSSDateTime/Plugins" />
-        <Command type="AfterBuild" command="cp -r GameData/ ../../../GameData/" workingdir="${SolutionDir}" />
       </CustomCommands>
     </CustomCommands>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>full</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>..\GameData\RSSDateTime\Plugins\</OutputPath>
+    <OutputPath>bin\Release</OutputPath>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
@@ -64,7 +63,4 @@
   <ItemGroup>
     <None Include="EmptyClass.cs" />
   </ItemGroup>
-  <PropertyGroup>
-    <PostBuildEvent>del "System.Core.dll"</PostBuildEvent>
-  </PropertyGroup>
 </Project>

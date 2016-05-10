@@ -20,7 +20,7 @@ public class RealDateTimeFormatter : IDateTimeFormatter
         // short-circuit if invalid time passed
         if (IsInvalidTime (time))
             return InvalidTimeStr (time);
-        DateTime epoch = new DateTime (1951, 1, 1);
+        DateTime epoch = GetEpoch();
         DateTime target = epoch.AddSeconds (time);
         TimeSpan span = target - epoch;
         return string.Format ("{0}{1}, {2}{3}, {4}{5}, {6}{7}"
@@ -36,7 +36,7 @@ public class RealDateTimeFormatter : IDateTimeFormatter
         // short-circuit if invalid time passed
         if (IsInvalidTime (time))
             return InvalidTimeStr (time);
-        DateTime epoch = new DateTime (1951, 1, 1);
+        DateTime epoch = GetEpoch();
         DateTime target = epoch.AddSeconds (time);
         TimeSpan span = target - epoch;
         return string.Format ("{0}{1:D2}:{2:D2}:{3:D2}"
@@ -51,7 +51,7 @@ public class RealDateTimeFormatter : IDateTimeFormatter
         // short-circuit if invalid time passed
         if (IsInvalidTime (time))
             return InvalidTimeStr (time);
-        DateTime epoch = new DateTime (1951, 1, 1);
+        DateTime epoch = GetEpoch();
         DateTime target = epoch.AddSeconds (time);
         TimeSpan span = target - epoch;
         int dNum = span.Days;
@@ -82,7 +82,7 @@ public class RealDateTimeFormatter : IDateTimeFormatter
             time = Math.Abs (time);
             isNegativeTime = true;
         }
-        DateTime epoch = new DateTime (1951, 1, 1);
+        DateTime epoch = GetEpoch();
         DateTime target = epoch.AddSeconds (time);
         TimeSpan span = target - epoch;
         return string.Format ("{0}{1}{2}{3}{4}"
@@ -103,7 +103,7 @@ public class RealDateTimeFormatter : IDateTimeFormatter
             time = Math.Abs (time);
             isNegativeTime = true;
         }
-        DateTime epoch = new DateTime (1951, 1, 1);
+        DateTime epoch = GetEpoch();
         DateTime target = epoch.AddSeconds (time);
         TimeSpan span = target - epoch;
         return string.Format ("{0}{1}{2:D2}:{3:D2}:{4:D2}"
@@ -123,7 +123,7 @@ public class RealDateTimeFormatter : IDateTimeFormatter
         if (time == 0d)
             return string.Format("0 {0}", includeTime ? (includeSeconds ? "seconds" : "minutes") : "days");
 
-        DateTime epoch = new DateTime (1951, 1, 1);
+        DateTime epoch = GetEpoch();
         DateTime target = epoch.AddSeconds (time);
         TimeSpan span = target - epoch;
 
@@ -143,7 +143,7 @@ public class RealDateTimeFormatter : IDateTimeFormatter
         if (time == 0d)
             return string.Format("0{0}", includeTime ? (includeSeconds ? "s" : "m") : "d");
 
-        DateTime epoch = new DateTime (1951, 1, 1);
+        DateTime epoch = GetEpoch();
         DateTime target = epoch.AddSeconds (time);
         TimeSpan span = target - epoch;
 
@@ -159,7 +159,7 @@ public class RealDateTimeFormatter : IDateTimeFormatter
         if (IsInvalidTime (time))
             return InvalidTimeStr (time);
 
-        DateTime epoch = new DateTime (1951, 1, 1);
+        DateTime epoch = GetEpoch();
         DateTime target = epoch.AddSeconds (time);
         return string.Format("{0:d} {1}"
             ,target
@@ -171,7 +171,7 @@ public class RealDateTimeFormatter : IDateTimeFormatter
         if (IsInvalidTime (time))
             return InvalidTimeStr (time);
 
-        DateTime epoch = new DateTime (1951, 1, 1);
+        DateTime epoch = GetEpoch();
         DateTime target = epoch.AddSeconds (time);
 
         return string.Format("{0:d} {1}"
@@ -184,7 +184,7 @@ public class RealDateTimeFormatter : IDateTimeFormatter
         if (IsInvalidTime (time))
             return InvalidTimeStr (time);
 
-        DateTime epoch = new DateTime (1951, 1, 1);
+        DateTime epoch = GetEpoch();
         DateTime target = epoch.AddSeconds (time);
 
         return string.Format("{0}-{1} {2}{3}"
@@ -246,7 +246,12 @@ public class RealDateTimeFormatter : IDateTimeFormatter
 
     protected DateTime DateFromUT(double time)
     {
-        return new DateTime (1951, 1, 1).AddSeconds (time);
+        return GetEpoch().AddSeconds (time);
+    }
+
+    protected DateTime GetEpoch()
+    {
+        return new DateTime (1951, 1, 1);
     }
 
     public RealDateTimeFormatter()

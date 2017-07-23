@@ -7,14 +7,57 @@ public class DTReplacer : MonoBehaviour
     public void Start ()
     {
         Debug.Log ("Replacing DateTime formatter");
-        KSPUtil.dateTimeFormatter = new RealDateTimeFormatter ();
+        var configs = GameDatabase.Instance.GetConfigs ("RSSTimeFormatter");
+        // Since Unity overrides the CurrentCulture, we cannot rely on it to
+        // format dates in a way that the user will understand, see
+        // https://github.com/KSP-RO/RSSTimeFormatter/issues/2.
+        // This default is an international standard, namely ISO 8601 extended
+        // format.  It is chosen (and was designed) to avoid ambiguities on the
+        // order of month and day that are inevitable with formats using
+        // slashes.
+        string dateFormat = "yyyy-MM-dd";
+        if (configs.Length > 1)
+        {
+            Debug.LogError (
+                "Multiple `RSSTimeFormatter` configurations, falling back to default");
+        }
+        else if (configs.Length == 1)
+        {
+            ConfigNode config = configs[0].config;
+            var formats = config.GetValues ("dateFormat");
+            if (formats.Length > 1)
+            {
+                Debug.LogError (
+                    "`RSSTimeFormatter` configuration has multiple `dateFormat` entries, falling back to default");
+            }
+            else if (formats.Length == 0)
+            {
+                Debug.LogError (
+                    "`RSSTimeFormatter` configuration has no `dateFormat` entry, falling back to default");
+            }
+            else
+            {
+                // Validate the format string.
+                try
+                {
+                  string.Format ("{0:" + formats[0] + "}" , new DateTime(1957, 08, 04));
+                  dateFormat = formats[0];
+                }
+                catch (FormatException)
+                {
+                    Debug.LogError ("`RSSTimeFormatter` configuration has the invalid `dateFormat` entry " + formats[0]);
+                }
+            }
+        }
+        KSPUtil.dateTimeFormatter = new RealDateTimeFormatter (dateFormat);
     }
 }
 
 public class RealDateTimeFormatter : IDateTimeFormatter
 {
-    #region IDateTimeFormatter implementation
-    public string PrintTimeLong (double time)
+  private string dateFormat;
+  #region IDateTimeFormatter implementation
+  public string PrintTimeLong (double time)
     {
         Debug.Log ("PrintTimeLong");
         // short-circuit if invalid time passed
@@ -161,7 +204,7 @@ public class RealDateTimeFormatter : IDateTimeFormatter
 
         DateTime epoch = GetEpoch();
         DateTime target = epoch.AddSeconds (time);
-        return string.Format("{0:d} {1}"
+        return string.Format("{0:" + dateFormat + "} {1}"
             ,target
             ,includeTime ? string.Format("{0:D2}:{1:D2}:{2:D2}", target.Hour, target.Minute, target.Second) : ""
         );
@@ -174,7 +217,7 @@ public class RealDateTimeFormatter : IDateTimeFormatter
         DateTime epoch = GetEpoch();
         DateTime target = epoch.AddSeconds (time);
 
-        return string.Format("{0:d} {1}"
+        return string.Format("{0:" + dateFormat + "} {1}"
             ,target
             ,includeTime ? string.Format("{0:D2}:{1:D2}:{2:D2}", target.Hour, target.Minute, target.Second) : ""
         );
@@ -256,5 +299,10 @@ public class RealDateTimeFormatter : IDateTimeFormatter
 
     public RealDateTimeFormatter()
     {
+    }
+
+    public RealDateTimeFormatter (string dateFormat)
+    {
+        this.dateFormat = dateFormat;
     }
 }

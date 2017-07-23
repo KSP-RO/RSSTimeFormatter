@@ -46,7 +46,7 @@ public class DTReplacer : MonoBehaviour
             // Validate the format string.
             try
             {
-              string.Format ("{0:" + customDateFormat + "}" , new DateTime (1957, 08, 04));
+              string.Format ("{0:" + customDateFormat + "}" , new DateTime (1957, 10, 04));
               dateFormat = customDateFormat;
             }
             catch (FormatException)

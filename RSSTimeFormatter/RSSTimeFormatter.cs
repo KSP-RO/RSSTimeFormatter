@@ -153,6 +153,12 @@ public class RealDateTimeFormatter : IDateTimeFormatter
             ,valuesOfInterest >= 0 ? string.Format("{0}s", span.Seconds) : ""
         );
     }
+
+    public string PrintTime (double time, int valuesOfInterest, bool explicitPositive, bool logEnglish)
+    {
+        return PrintTime (time, valuesOfInterest, explicitPositive);
+    }
+
     public string PrintTimeCompact (double time, bool explicitPositive)
     {
         if (IsInvalidTime (time))

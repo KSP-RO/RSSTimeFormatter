@@ -1,6 +1,6 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 <ItemGroup>
-  <FilesToCopy Include="$(OutputPath)\RSStimeFormatter.dll" />
+  <FilesToCopy Include="$(OutputPath)\RSSTimeFormatter.dll" />
 </ItemGroup>
 <Target Name="AfterBuild">
   <Message Text="This is the AfterBuild target" Importance="normal"/>

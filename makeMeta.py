@@ -6,7 +6,7 @@ class DefaultHelpParser(argparse.ArgumentParser):
         self.print_help()
         sys.exit(2)
 
-HELP_DESC = "Creates neccesary metadata files"
+HELP_DESC = "Creates necessary metadata files"
 parser = DefaultHelpParser(description=HELP_DESC)
 parser.add_argument('tag', metavar='tag', type=str, nargs=1,
                    help='tag of release (e.g. 0.4.6.0')
@@ -38,8 +38,8 @@ avc = {
 	"KSP_VERSION" :
 	{
 		"MAJOR" : 1,
-		"MINOR" : 2,
-		"PATCH" : 2
+		"MINOR" : 5,
+		"PATCH" : 1
 	}
 }
 with open("RSSDateTime.version", "w") as f:

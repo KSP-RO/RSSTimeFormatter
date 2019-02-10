@@ -130,7 +130,7 @@ namespace RSSTimeFormatter
 			TimeSpan span = target - epoch;
 
 			return string.Format("{0}{1}{2}{3}"
-				, span.Days > 0 ? string.Format("{0} {1} ", span.Days, span.Days == 1 ? "year" : "years") : ""
+				, span.Days > 0 ? string.Format("{0} {1} ", span.Days, span.Days == 1 ? "day" : "days") : ""
 				, span.Hours > 0 && includeTime ? string.Format("{0} {1} ", span.Hours, span.Hours == 1 ? "hour" : "hours") : ""
 				, span.Minutes > 0 && includeTime ? string.Format("{0} {1} ", span.Minutes, span.Minutes == 1 ? "minute" : "minutes") : ""
 				, span.Seconds > 0 && includeTime && includeSeconds ? string.Format("{0} {1}", span.Seconds, span.Seconds == 1 ? "second" : "seconds") : ""

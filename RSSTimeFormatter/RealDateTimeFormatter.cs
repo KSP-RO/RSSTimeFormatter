@@ -65,30 +65,31 @@ namespace RSSTimeFormatter
 		}
 		public string PrintTime(double time, int valuesOfInterest, bool explicitPositive)
 		{
-			// This is a downright strange and confusing method but as I understand it
-			// what it is saying is give it the time in the following format:
-			// 1y, 1d, 1h, 1m, 1s
-			// But the param 'valuesOfInterest' is used to control how 'deep' it goes
-			// IOW a valueofInterest of say 3 would only give you hours, minutes, and seconds
-			// Why it isn't more straightforward is beyond me
-			// short-circuit if invalid time passed
 			if (IsInvalidTime(time))
 				return InvalidTimeStr(time);
-			bool isNegativeTime = false;
-			if (time < 0) {
-				time = Math.Abs(time);
-				isNegativeTime = true;
+			bool isTimeNegative = time < 0;
+			time = Math.Abs(time);
+			TimeSpan span = TimeSpan.FromSeconds(time);
+			int[] data = DataFromTimeSpan(span);
+			string[] intervalCaptions = { "y", "d", "h", "m", "s" };
+			string result = isTimeNegative ? "- " : (explicitPositive ? "+ " : "");
+			for (int i = 0; i <= data.Length - 1; i++) {
+				if (data[i] != 0) {
+					for (int j = 0; j < valuesOfInterest; j++) {
+						if (j < data.Length - 1) {
+							result += $"{data[i + j]}{intervalCaptions[i + j]}";
+						}
+						if (j != valuesOfInterest - 1 && j != data.Length - 1) {
+							result += ", ";
+						}
+					}
+					break;
+				}
 			}
-			DateTime epoch = GetEpoch();
-			DateTime target = epoch.AddSeconds(time);
-			TimeSpan span = target - epoch;
-			return string.Format("{0}{1}{2}{3}{4}"
-				, isNegativeTime ? "- " : (explicitPositive ? "+ " : "")
-				, (valuesOfInterest >= 3 && span.Days != 0) ? string.Format("{0}d, ", span.Days) : ""
-				, (valuesOfInterest >= 2 && span.Hours != 0) ? string.Format("{0}h, ", span.Hours) : ""
-				, (valuesOfInterest >= 1 && span.Minutes != 0) ? string.Format("{0}m, ", span.Minutes) : ""
-				, valuesOfInterest >= 0 ? string.Format("{0}s", span.Seconds) : ""
-			);
+			if (result == "") {
+				return "0s";
+			}
+			return result;
 		}
 
 		public string PrintTime(double time, int valuesOfInterest, bool explicitPositive, bool logEnglish)
@@ -136,7 +137,7 @@ namespace RSSTimeFormatter
 				, span.Seconds > 0 && includeTime && includeSeconds ? string.Format("{0} {1}", span.Seconds, span.Seconds == 1 ? "second" : "seconds") : ""
 			);
 		}
-		public string PrintDateDeltaCompact(double time, bool includeTime, bool includeSeconds, bool useAbs)
+        public string PrintDateDeltaCompact(double time, bool includeTime, bool includeSeconds, bool useAbs)
 		{
 			if (IsInvalidTime(time))
 				return InvalidTimeStr(time);
@@ -217,6 +218,18 @@ namespace RSSTimeFormatter
 			}
 		}
 		#endregion
+
+		private int[] DataFromTimeSpan(TimeSpan span)
+		{
+			return new int[]
+			{
+				(int)(span.TotalDays / 365),
+				span.Days,
+				span.Hours,
+				span.Minutes,
+				span.Seconds
+			};
+		}
 
 		protected bool IsInvalidTime(double time)
 		{

@@ -61,11 +61,11 @@ namespace RSSTimeFormatter
             int years = (int)(span.TotalDays / 365);
             return string.Format("{0}{1}{2}{3}{4}{5}"
                 , isTimeNegative ? "- " : (explicitPositive ? "+ " : "")
-                , years > 0 ? string.Format("{0}y, ", years) : ""
-                , (valuesOfInterest >= 1 && span.Days != 0) ? string.Format("{0}d, ", span.Days) : ""
-                , (valuesOfInterest >= 2 && span.Hours != 0) ? string.Format("{0}h, ", span.Hours) : ""
-                , (valuesOfInterest >= 3 && span.Minutes != 0) ? string.Format("{0}m, ", span.Minutes) : ""
-                , valuesOfInterest >= 4 ? string.Format("{0}s", span.Seconds) : ""
+                , years > 0 ? string.Format("{0}y", years) : ""
+                , (valuesOfInterest >= 1 && span.Days != 0) ? string.Format(", {0}d", span.Days) : ""
+                , (valuesOfInterest >= 2 && span.Hours != 0) ? string.Format(", {0}h", span.Hours) : ""
+                , (valuesOfInterest >= 3 && span.Minutes != 0) ? string.Format(", {0}m", span.Minutes) : ""
+                , valuesOfInterest >= 4 ? string.Format(", {0}s", span.Seconds) : ""
             );
         }
 

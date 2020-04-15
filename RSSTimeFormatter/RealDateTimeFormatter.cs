@@ -65,7 +65,7 @@ namespace RSSTimeFormatter
 			int years = (int)(span.TotalDays / 365);
 			return string.Format("{0}{1}{2}{3}{4}{5}"
 				, isTimeNegative ? "- " : (explicitPositive ? "+ " : "")
-				, years > 0 ? $"{years}y" : ""
+				, (valuesOfInterest == 0  || years != 0) ? $"{years}y" : ""
 				, (valuesOfInterest >= 1 && span.Days != 0) ? $", {span.Days}d" : ""
 				, (valuesOfInterest >= 2 && span.Hours != 0) ? $", {span.Hours}h" : ""
 				, (valuesOfInterest >= 3 && span.Minutes != 0) ? $", {span.Minutes}m": ""

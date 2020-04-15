@@ -6,19 +6,22 @@ using UnityEngine;
 
 namespace RSSTimeFormatter
 {
-    public class RealDateTimeFormatter : IDateTimeFormatter {
+    public class RealDateTimeFormatter : IDateTimeFormatter
+    {
         private string dateFormat;
         private DateTime epoch;
 
         #region IDateTimeFormatter implementation
-        public string PrintTimeLong(double time) {
+        public string PrintTimeLong(double time)
+        {
             // short-circuit if invalid time passed
             if (IsInvalidTime(time))
                 return InvalidTimeStr(time);
             TimeSpan span = TimeSpan.FromSeconds(time);
             return spanAsLongFormDateString(span);
         }
-        public string PrintTimeStamp(double time, bool days = false, bool years = false) {
+        public string PrintTimeStamp(double time, bool days = false, bool years = false)
+        {
             // short-circuit if invalid time passed
             if (IsInvalidTime(time))
                 return InvalidTimeStr(time);
@@ -28,7 +31,8 @@ namespace RSSTimeFormatter
                 , spanAs24HWithSeconds(span)
             );
         }
-        public string PrintTimeStampCompact(double time, bool days = false, bool years = false) {
+        public string PrintTimeStampCompact(double time, bool days = false, bool years = false)
+        {
             // short-circuit if invalid time passed
             if (IsInvalidTime(time))
                 return InvalidTimeStr(time);
@@ -40,7 +44,8 @@ namespace RSSTimeFormatter
                 , spanAs24HWithSeconds(span)
             );
         }
-        public string PrintTime(double time, int valuesOfInterest, bool explicitPositive) {
+        public string PrintTime(double time, int valuesOfInterest, bool explicitPositive)
+        {
             // This is a downright strange and confusing method but as I understand it
             // what it is saying is give it the time in the following format:
             // 1y, 1d, 1h, 1m, 1s
@@ -64,11 +69,13 @@ namespace RSSTimeFormatter
             );
         }
 
-        public string PrintTime(double time, int valuesOfInterest, bool explicitPositive, bool logEnglish) {
+        public string PrintTime(double time, int valuesOfInterest, bool explicitPositive, bool logEnglish)
+        {
             return PrintTime(time, valuesOfInterest, explicitPositive);
         }
-        
-        public string PrintTimeCompact(double time, bool explicitPositive) {
+
+        public string PrintTimeCompact(double time, bool explicitPositive)
+        {
             if (IsInvalidTime(time))
                 return InvalidTimeStr(time);
             bool isTimeNegative = time < 0;
@@ -80,16 +87,18 @@ namespace RSSTimeFormatter
                 , spanAs24HWithSeconds(span)
             );
         }
-        public string PrintDateDelta(double time, bool includeTime, bool includeSeconds, bool useAbs) {
+        public string PrintDateDelta(double time, bool includeTime, bool includeSeconds, bool useAbs)
+        {
             if (IsInvalidTime(time))
                 return InvalidTimeStr(time);
             time = useAbs ? Math.Abs(time) : time;
             if (time == 0d)
                 return string.Format("0 {0}", includeTime ? (includeSeconds ? "seconds" : "minutes") : "days");
-            TimeSpan span = TimeSpan.FromSeconds(time);       
+            TimeSpan span = TimeSpan.FromSeconds(time);
             return spanAsLongFormDateString(span, " ");
         }
-        public string PrintDateDeltaCompact(double time, bool includeTime, bool includeSeconds, bool useAbs) {
+        public string PrintDateDeltaCompact(double time, bool includeTime, bool includeSeconds, bool useAbs)
+        {
             if (IsInvalidTime(time))
                 return InvalidTimeStr(time);
             time = useAbs ? Math.Abs(time) : time;
@@ -98,7 +107,8 @@ namespace RSSTimeFormatter
             TimeSpan span = TimeSpan.FromSeconds(time);
             return spanAsShortFormDateString(span, " ");
         }
-        public string PrintDate(double time, bool includeTime, bool includeSeconds = false) {
+        public string PrintDate(double time, bool includeTime, bool includeSeconds = false)
+        {
             if (IsInvalidTime(time))
                 return InvalidTimeStr(time);
             DateTime target = GetEpoch().AddSeconds(time);
@@ -107,11 +117,13 @@ namespace RSSTimeFormatter
                 , includeTime ? (" " + dateTimeAs24H(target, includeSeconds)) : ""
             );
         }
-        public string PrintDateNew(double time, bool includeTime) {
+        public string PrintDateNew(double time, bool includeTime)
+        {
             return PrintDate(time, includeTime, true);
         }
 
-        public string PrintDateCompact(double time, bool includeTime, bool includeSeconds = false) {
+        public string PrintDateCompact(double time, bool includeTime, bool includeSeconds = false)
+        {
             if (IsInvalidTime(time))
                 return InvalidTimeStr(time);
 
@@ -120,7 +132,7 @@ namespace RSSTimeFormatter
             return string.Format("{0}-{1}{2}"
                 , target.Year
                 , target.DayOfYear
-                , includeTime ? (" " + dateTimeAs24H(target, includeSeconds)): ""
+                , includeTime ? (" " + dateTimeAs24H(target, includeSeconds)) : ""
             );
         }
 
@@ -145,46 +157,53 @@ namespace RSSTimeFormatter
             }
         }
         #endregion
-
-        private string spanAs24H(TimeSpan span, bool includeSeconds) {
+        private string spanAs24H(TimeSpan span, bool includeSeconds)
+        {
             if (includeSeconds)
                 return spanAs24HWithSeconds(span);
-            return spanAs24H(span);        
+            return spanAs24H(span);
         }
-        private string spanAs24H(TimeSpan span) {
+        private string spanAs24H(TimeSpan span)
+        {
             return string.Format("{0:D2}:{1:D2}",
-                span.Hours, 
+                span.Hours,
                 span.Minutes);
         }
-        private string spanAs24HWithSeconds(TimeSpan span) {
+        private string spanAs24HWithSeconds(TimeSpan span)
+        {
             return string.Format("{0:D2}:{1:D2}:{2:D2}",
                 span.Hours,
                 span.Minutes,
                 span.Seconds);
         }
 
-        private string dateTimeAs24H(DateTime time, bool includeSeconds) {
+        private string dateTimeAs24H(DateTime time, bool includeSeconds)
+        {
             if (includeSeconds)
                 return dateTimeAs24HWithSeconds(time);
             return dateTimeAs24H(time);
         }
-        private string dateTimeAs24H(DateTime time) {
+        private string dateTimeAs24H(DateTime time)
+        {
             return string.Format("{0:D2}:{1:D2}",
                 time.Hour,
                 time.Minute);
         }
-        private string dateTimeAs24HWithSeconds(DateTime time) {
+        private string dateTimeAs24HWithSeconds(DateTime time)
+        {
             return string.Format("{0:D2}:{1:D2}:{2:D2}",
                 time.Hour,
                 time.Minute,
                 time.Second);
         }
 
-        private string spanAsDateString(TimeSpan span, bool longForm, string seperator = ", ") {
+        private string spanAsDateString(TimeSpan span, bool longForm, string seperator = ", ")
+        {
             if (longForm) return spanAsLongFormDateString(span, seperator);
             return spanAsShortFormDateString(span, seperator);
         }
-        private string spanAsShortFormDateString(TimeSpan span, string seperator = ", ") {
+        private string spanAsShortFormDateString(TimeSpan span, string seperator = ", ")
+        {
             return string.Format("{1}d{0}{2}h{0}{3}m{0}{4}s"
                 , seperator
                 , span.Days
@@ -193,7 +212,8 @@ namespace RSSTimeFormatter
                 , span.Seconds
             );
         }
-        private string spanAsLongFormDateString(TimeSpan span, string seperator = ", ") {
+        private string spanAsLongFormDateString(TimeSpan span, string seperator = ", ")
+        {
             return string.Format("{1}{2}{0}{3}{4}{0}{5}{6}{0}{7}{8}"
                 , seperator
                 , span.Days, span.Days == 1 ? "day" : "days"
@@ -202,11 +222,13 @@ namespace RSSTimeFormatter
                 , span.Seconds, span.Seconds == 1 ? "second" : "seconds"
             );
         }
-        private string dateTimeAsDateString(DateTime time, bool longForm, string seperator = ", ") {
+        private string dateTimeAsDateString(DateTime time, bool longForm, string seperator = ", ")
+        {
             if (longForm) return dateTimeAsLongFormDateString(time, seperator);
             return dateTimeAsShortFormDateString(time, seperator);
         }
-        private string dateTimeAsShortFormDateString(DateTime time, string seperator = ", ") {
+        private string dateTimeAsShortFormDateString(DateTime time, string seperator = ", ")
+        {
             return string.Format("{1}d{0}{2}h{0}{3}m{0}{4}s"
                 , seperator
                 , time.Day
@@ -215,7 +237,8 @@ namespace RSSTimeFormatter
                 , time.Second
             );
         }
-        private string dateTimeAsLongFormDateString(DateTime time, string seperator = ", ") {
+        private string dateTimeAsLongFormDateString(DateTime time, string seperator = ", ")
+        {
             return string.Format("{1}{2}{0}{3}{4}{0}{5}{6}{0}{7}{8}"
                 , seperator
                 , time.Day, time.Day == 1 ? "day" : "days"
@@ -226,44 +249,44 @@ namespace RSSTimeFormatter
         }
 
         protected bool IsInvalidTime(double time)
-		{
-			if (double.IsNaN(time) || double.IsPositiveInfinity(time) || double.IsNegativeInfinity(time))
-				return true;
-			else
-				return false;
-		}
-		protected string InvalidTimeStr(double time)
-		{
-			if (double.IsNaN(time)) {
-				return "NaN";
-			}
-			if (double.IsPositiveInfinity(time)) {
-				return "+Inf";
-			}
-			if (double.IsNegativeInfinity(time)) {
-				return "-Inf";
-			}
-			return null;
-		}
+        {
+            if (double.IsNaN(time) || double.IsPositiveInfinity(time) || double.IsNegativeInfinity(time))
+                return true;
+            else
+                return false;
+        }
+        protected string InvalidTimeStr(double time)
+        {
+            if (double.IsNaN(time)) {
+                return "NaN";
+            }
+            if (double.IsPositiveInfinity(time)) {
+                return "+Inf";
+            }
+            if (double.IsNegativeInfinity(time)) {
+                return "-Inf";
+            }
+            return null;
+        }
 
-		protected DateTime DateFromUT(double time)
-		{
-			return GetEpoch().AddSeconds(time);
-		}
+        protected DateTime DateFromUT(double time)
+        {
+            return GetEpoch().AddSeconds(time);
+        }
 
-		protected DateTime GetEpoch()
-		{
-			return epoch;
-		}
+        protected DateTime GetEpoch()
+        {
+            return epoch;
+        }
 
-		public RealDateTimeFormatter()
-		{
-		}
+        public RealDateTimeFormatter()
+        {
+        }
 
-		public RealDateTimeFormatter(string dateFormat, DateTime epoch)
-		{
-			this.dateFormat = dateFormat;
-			this.epoch = epoch;
-		}
-	}
+        public RealDateTimeFormatter(string dateFormat, DateTime epoch)
+        {
+            this.dateFormat = dateFormat;
+            this.epoch = epoch;
+        }
+    }
 }

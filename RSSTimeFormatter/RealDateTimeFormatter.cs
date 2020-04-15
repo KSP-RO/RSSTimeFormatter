@@ -62,18 +62,29 @@ namespace RSSTimeFormatter
 			bool isTimeNegative = time < 0;
 			time = Math.Abs(time);
 			TimeSpan span = TimeSpan.FromSeconds(time);
-			int years = (int)(span.TotalDays / 365);
-			return string.Format("{0}{1}{2}{3}{4}{5}"
-				, isTimeNegative ? "- " : (explicitPositive ? "+ " : "")
-				, (valuesOfInterest == 0  || years != 0) ? $"{years}y" : ""
-				, (valuesOfInterest >= 1 && span.Days != 0) ? $", {span.Days}d" : ""
-				, (valuesOfInterest >= 2 && span.Hours != 0) ? $", {span.Hours}h" : ""
-				, (valuesOfInterest >= 3 && span.Minutes != 0) ? $", {span.Minutes}m": ""
-				, valuesOfInterest >= 4 ? $", {span.Seconds}s" : ""
-			);
+			int[] data = DataFromTimeSpan(span);
+			string[] intervalCaptions = {"y", "d", "h", "m", "s"};
+			string result = isTimeNegative ? "- " : (explicitPositive ? "+ " : "");
+			for (int i = 0; i <= data.Length - 1; i++) {
+				if (data[i] != 0) {
+					for (int j = 0; j < valuesOfInterest; j++) {
+						if (j < data.Length - 1) {
+							result += $"{data[i + j]}{intervalCaptions[i + j]}";
+						}
+						if (j != valuesOfInterest - 1 && j != data.Length - 1) {
+							result += ", ";
+						}
+					}
+					break;
+				}
+			}
+			if (result == "") {
+				return "0s";
+			}
+			return result;
 		}
 
-        public string PrintTime(double time, int valuesOfInterest, bool explicitPositive, bool logEnglish)
+		public string PrintTime(double time, int valuesOfInterest, bool explicitPositive, bool logEnglish)
 		{
 			return PrintTime(time, valuesOfInterest, explicitPositive);
 		}
@@ -96,7 +107,7 @@ namespace RSSTimeFormatter
 		{
 			if (IsInvalidTime(time))
 				return InvalidTimeStr(time);
-			time = useAbs ? Math.Abs(time) : time;
+            if (useAbs) time = Math.Abs(time);
 			if (time == 0d)
 				return string.Format("0 {0}", includeTime ? (includeSeconds ? "seconds" : "minutes") : "days");
 			TimeSpan span = TimeSpan.FromSeconds(time);
@@ -107,8 +118,8 @@ namespace RSSTimeFormatter
 		{
 			if (IsInvalidTime(time))
 				return InvalidTimeStr(time);
-			time = useAbs ? Math.Abs(time) : time;
-			if (time == 0d)
+            if (useAbs) time = Math.Abs(time);
+            if (time == 0d)
 				return string.Format("0{0}", includeTime ? (includeSeconds ? "s" : "m") : "d");
 			TimeSpan span = TimeSpan.FromSeconds(time);
 			return SpanAsShortFormDateString(span, " ");
@@ -169,6 +180,18 @@ namespace RSSTimeFormatter
 		}
 
 		#endregion
+		
+		private int[] DataFromTimeSpan(TimeSpan span)
+		{
+			return new int[]
+			{
+				(int)(span.TotalDays / 365),
+				span.Days,
+				span.Hours,
+				span.Minutes,
+				span.Seconds
+			};
+		}
 
 		private string SpanAs24H(TimeSpan span, bool includeSeconds)
 		{
@@ -179,12 +202,12 @@ namespace RSSTimeFormatter
 
 		private string SpanAs24H(TimeSpan span)
 		{
-            return $"{span.Hours:D2}:{span.Minutes:D2}";
+			return $"{span.Hours:D2}:{span.Minutes:D2}";
 		}
 
 		private string SpanAs24HWithSeconds(TimeSpan span)
 		{
-            return $"{span.Hours:D2}:{span.Minutes:D2}:{span.Seconds:D2}";
+			return $"{span.Hours:D2}:{span.Minutes:D2}:{span.Seconds:D2}";
 		}
 
 		private string DateTimeAs24H(DateTime time, bool includeSeconds)
@@ -196,7 +219,7 @@ namespace RSSTimeFormatter
 
 		private string DateTimeAs24H(DateTime time)
 		{
-            return $"{time.Hour:D2}:{time.Minute:D2}";
+			return $"{time.Hour:D2}:{time.Minute:D2}";
 		}
 
 		private string DateTimeAs24HWithSeconds(DateTime time)

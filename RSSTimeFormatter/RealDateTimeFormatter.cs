@@ -65,6 +65,14 @@ namespace RSSTimeFormatter
 		}
 		public string PrintTime(double time, int valuesOfInterest, bool explicitPositive)
 		{
+			// Given a timespan of 1 year, 1 day, 1 hour, 1 minute and 1 second:
+			// this function prints the time as "1y, 1d, 1h, 1m, 1s"
+			// You can set the MAXIMUM number of returned values (e.g. "1y") with valuesOfInterest.
+			// The result will contain values from the first field that is non-0. Starting at the most significant field (years).
+			// This makes sense because when you only have enough space to show 2 values, you'd want the 2 most significant values.
+			// Examples:
+			// In a multiyear timespan with valuesOfInterest of 1 (so 2 values), you'd want to see the years and days, not minutes and seconds.
+			// In a multiweek timespan with valuesOfInterest of 1, you'd want to see days and hours.
 			if (IsInvalidTime(time))
 				return InvalidTimeStr(time);
 			bool isTimeNegative = time < 0;
@@ -137,7 +145,7 @@ namespace RSSTimeFormatter
 				, span.Seconds > 0 && includeTime && includeSeconds ? string.Format("{0} {1}", span.Seconds, span.Seconds == 1 ? "second" : "seconds") : ""
 			);
 		}
-        public string PrintDateDeltaCompact(double time, bool includeTime, bool includeSeconds, bool useAbs)
+		public string PrintDateDeltaCompact(double time, bool includeTime, bool includeSeconds, bool useAbs)
 		{
 			if (IsInvalidTime(time))
 				return InvalidTimeStr(time);

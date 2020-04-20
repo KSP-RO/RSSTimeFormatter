@@ -18,9 +18,7 @@ namespace RSSTimeFormatter
 			// short-circuit if invalid time passed
 			if (IsInvalidTime(time))
 				return InvalidTimeStr(time);
-			DateTime epoch = GetEpoch();
-			DateTime target = epoch.AddSeconds(time);
-			TimeSpan span = target - epoch;
+			TimeSpan span = TimeSpan.FromSeconds(time);
 			return string.Format("{0}{1}, {2}{3}, {4}{5}, {6}{7}"
 				, span.Days, span.Days == 1 ? "day" : "days"
 				, span.Hours, span.Hours == 1 ? "hour" : "hours"
@@ -34,9 +32,7 @@ namespace RSSTimeFormatter
 			// short-circuit if invalid time passed
 			if (IsInvalidTime(time))
 				return InvalidTimeStr(time);
-			DateTime epoch = GetEpoch();
-			DateTime target = epoch.AddSeconds(time);
-			TimeSpan span = target - epoch;
+			TimeSpan span = TimeSpan.FromSeconds(time);
 			return string.Format("{0}{1:D2}:{2:D2}:{3:D2}"
 				, days ? string.Format("Day {0} - ", span.Days) : ""
 				, span.Hours
@@ -49,15 +45,10 @@ namespace RSSTimeFormatter
 			// short-circuit if invalid time passed
 			if (IsInvalidTime(time))
 				return InvalidTimeStr(time);
-			DateTime epoch = GetEpoch();
-			DateTime target = epoch.AddSeconds(time);
-			TimeSpan span = target - epoch;
-			int dNum = span.Days;
-			int yNum = dNum / 365;
-			int subDays = dNum - yNum * 365;
+			TimeSpan span = TimeSpan.FromSeconds(time);
 			return string.Format("{0}{1}{2:D2}:{3:D2}:{4:D2}"
-				, years ? string.Format("{0}y, ", yNum) : ""
-				, days ? string.Format("{0}d, ", ((years && subDays != 0) ? subDays : dNum)) : ""
+				, years ? $"{span.Days % 365}y, " : ""
+				, days ? $"{span.Days / 365}d, " : ""
 				, span.Hours
 				, span.Minutes
 				, span.Seconds
@@ -74,14 +65,10 @@ namespace RSSTimeFormatter
 			// short-circuit if invalid time passed
 			if (IsInvalidTime(time))
 				return InvalidTimeStr(time);
-			bool isNegativeTime = false;
-			if (time < 0) {
-				time = Math.Abs(time);
-				isNegativeTime = true;
-			}
-			DateTime epoch = GetEpoch();
-			DateTime target = epoch.AddSeconds(time);
-			TimeSpan span = target - epoch;
+			bool isNegativeTime = time < 0;
+			// Make sure time is not negative
+			time = Math.Abs(time);
+			TimeSpan span = TimeSpan.FromSeconds(time);
 			return string.Format("{0}{1}{2}{3}{4}"
 				, isNegativeTime ? "- " : (explicitPositive ? "+ " : "")
 				, (valuesOfInterest >= 3 && span.Days != 0) ? string.Format("{0}d, ", span.Days) : ""
@@ -100,14 +87,10 @@ namespace RSSTimeFormatter
 		{
 			if (IsInvalidTime(time))
 				return InvalidTimeStr(time);
-			bool isNegativeTime = false;
-			if (time < 0) {
-				time = Math.Abs(time);
-				isNegativeTime = true;
-			}
-			DateTime epoch = GetEpoch();
-			DateTime target = epoch.AddSeconds(time);
-			TimeSpan span = target - epoch;
+			bool isNegativeTime = time < 0;
+			// Make sure time is not negative
+			time = Math.Abs(time);
+			TimeSpan span = TimeSpan.FromSeconds(time);
 			return string.Format("{0}{1}{2:D2}:{3:D2}:{4:D2}"
 				, isNegativeTime ? "- " : (explicitPositive ? "+ " : "")
 				, (span.Days != 0 ? span.Days.ToString() : "")
@@ -120,15 +103,12 @@ namespace RSSTimeFormatter
 		{
 			if (IsInvalidTime(time))
 				return InvalidTimeStr(time);
-			if (time < 0 && useAbs)
+			if (useAbs)
 				time = Math.Abs(time);
 			if (time == 0d)
 				return string.Format("0 {0}", includeTime ? (includeSeconds ? "seconds" : "minutes") : "days");
 
-			DateTime epoch = GetEpoch();
-			DateTime target = epoch.AddSeconds(time);
-			TimeSpan span = target - epoch;
-
+			TimeSpan span = TimeSpan.FromSeconds(time);
 			return string.Format("{0}{1}{2}{3}"
 				, span.Days > 0 ? string.Format("{0} {1} ", span.Days, span.Days == 1 ? "day" : "days") : ""
 				, span.Hours > 0 && includeTime ? string.Format("{0} {1} ", span.Hours, span.Hours == 1 ? "hour" : "hours") : ""
@@ -140,15 +120,12 @@ namespace RSSTimeFormatter
 		{
 			if (IsInvalidTime(time))
 				return InvalidTimeStr(time);
-			if (time < 0 && useAbs)
+			if (useAbs)
 				time = Math.Abs(time);
 			if (time == 0d)
 				return string.Format("0{0}", includeTime ? (includeSeconds ? "s" : "m") : "d");
-
-			DateTime epoch = GetEpoch();
-			DateTime target = epoch.AddSeconds(time);
-			TimeSpan span = target - epoch;
-
+			
+			TimeSpan span = TimeSpan.FromSeconds(time);
 			return string.Format("{0}{1}{2}{3}"
 				, span.Days > 0 ? string.Format("{0}{1} ", span.Days, "d") : ""
 				, span.Hours > 0 && includeTime ? string.Format("{0}{1} ", span.Hours, "h") : ""
@@ -161,8 +138,7 @@ namespace RSSTimeFormatter
 			if (IsInvalidTime(time))
 				return InvalidTimeStr(time);
 
-			DateTime epoch = GetEpoch();
-			DateTime target = epoch.AddSeconds(time);
+			DateTime target = DateFromUT(time);
 			return string.Format("{0:" + dateFormat + "} {1}"
 				, target
 				, includeTime ? string.Format("{0:D2}:{1:D2}:{2:D2}", target.Hour, target.Minute, target.Second) : ""
@@ -173,9 +149,7 @@ namespace RSSTimeFormatter
 			if (IsInvalidTime(time))
 				return InvalidTimeStr(time);
 
-			DateTime epoch = GetEpoch();
-			DateTime target = epoch.AddSeconds(time);
-
+			DateTime target = DateFromUT(time);
 			return string.Format("{0:" + dateFormat + "} {1}"
 				, target
 				, includeTime ? string.Format("{0:D2}:{1:D2}:{2:D2}", target.Hour, target.Minute, target.Second) : ""
@@ -186,9 +160,7 @@ namespace RSSTimeFormatter
 			if (IsInvalidTime(time))
 				return InvalidTimeStr(time);
 
-			DateTime epoch = GetEpoch();
-			DateTime target = epoch.AddSeconds(time);
-
+			DateTime target = DateFromUT(time);
 			return string.Format("{0}-{1} {2}{3}"
 				, target.Year
 				, target.DayOfYear

@@ -42,12 +42,8 @@ jobs:
           mkdir -v "${RELEASE_DIR}"
           echo "::set-output name=release-dir::${RELEASE_DIR}"
           cp -v -R "${GITHUB_WORKSPACE}/GameData" "${RELEASE_DIR}"
+          zip RSSDateTime-${{ github.event.release.tag_name }}.zip ${RUNNER_TEMP}/release/GameData ${RUNNER_TEMP}/release/GameData/RSSDateTime/* ${RUNNER_TEMP}/release/GameData/RSSDateTime/Plugins/*
 
-      - name: Package
-        uses: TheDoctor0/zip-release@f216aacfedcd3e76b3b027ab065503438cd00d57
-        with:
-          filename: RSSDateTimeFormatter-${{ github.event.release.tag_name }}.zip
-          path: ${{ steps.assemble-release.outputs.release-dir }}
       - name: release
         uses: skx/github-action-publish-binaries@master
         env:

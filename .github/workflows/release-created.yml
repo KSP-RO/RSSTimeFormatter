@@ -45,11 +45,10 @@ jobs:
           echo "::set-output name=release-dir::${RELEASE_DIR}"
           cp -v -R "${GITHUB_WORKSPACE}/GameData" "${RELEASE_DIR}"
           zip ${RELEASE_DIR}/RSSDateTime-${{ github.event.release.tag_name }}.zip ${RUNNER_TEMP}/release/GameData ${RUNNER_TEMP}/release/GameData/RSSDateTime/* ${RUNNER_TEMP}/release/GameData/RSSDateTime/Plugins/RSSTimeFormatter.dll
-          ls -la
 
       - name: release
         uses: skx/github-action-publish-binaries@master
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          args: ${{ steps.assemble-release.outputs.release-dir }}/RSSDateTimeFormatter-${{ github.event.release.tag_name }}.zip        
+          args: ${{ steps.assemble-release.outputs.release-dir }}/RSSDateTime-${{ github.event.release.tag_name }}.zip        

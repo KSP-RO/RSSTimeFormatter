@@ -3,6 +3,7 @@ name: tagged-release
 # Controls when the action will run. 
 on:
   release:
+    types: [created,modified,published]
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -41,8 +42,7 @@ jobs:
           echo "Release dir: ${RELEASE_DIR}"
           mkdir -v "${RELEASE_DIR}"
           echo "::set-output name=release-dir::${RELEASE_DIR}"
-          cp -v -R "${GITHUB_WORKSPACE}/GameData" "${RELEASE_DIR}"
-          zip RSSDateTime-${{ github.event.release.tag_name }}.zip ${RUNNER_TEMP}/release/GameData ${RUNNER_TEMP}/release/GameData/RSSDateTime/* ${RUNNER_TEMP}/release/GameData/RSSDateTime/Plugins/*
+          zip ${RELEASE_DIR}/RSSDateTime-${{ github.event.release.tag_name }}.zip ${RUNNER_TEMP}/release/GameData ${RUNNER_TEMP}/release/GameData/RSSDateTime/* ${RUNNER_TEMP}/release/GameData/RSSDateTime/Plugins/RSSTimeFormatter.dll
 
       - name: release
         uses: skx/github-action-publish-binaries@master

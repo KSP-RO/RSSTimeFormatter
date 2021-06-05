@@ -63,30 +63,39 @@ namespace RSSTimeFormatter
 		}
 		public string PrintTime(double time, int valuesOfInterest, bool explicitPositive)
 		{
-			// This is a downright strange and confusing method but as I understand it
-			// what it is saying is give it the time in the following format:
-			// 1y, 1d, 1h, 1m, 1s
-			// But the param 'valuesOfInterest' is used to control how 'deep' it goes
-			// IOW a valueofInterest of say 3 would only give you hours, minutes, and seconds
-			// Why it isn't more straightforward is beyond me
-			// short-circuit if invalid time passed
+			// Given a timespan of 1 year, 1 day, 1 hour, 1 minute and 1 second:
+			// this function prints the time as "1y, 1d, 1h, 1m, 1s"
+			// You can set the MAXIMUM number of returned values (e.g. "1y") with valuesOfInterest.
+			// The result will contain values from the first field that is non-0. Starting at the most significant field (years).
+			// This makes sense because when you only have enough space to show 2 values, you'd want the 2 most significant values.
+			// Examples:
+			// In a multiyear timespan with valuesOfInterest of 1 (so 2 values), you'd want to see the years and days, not minutes and seconds.
+			// In a multiweek timespan with valuesOfInterest of 1, you'd want to see days and hours.
 			if (IsInvalidTime(time))
 				return InvalidTimeStr(time);
-			bool isNegativeTime = false;
-			if (time < 0) {
-				time = Math.Abs(time);
-				isNegativeTime = true;
+			bool isTimeNegative = time < 0;
+			time = Math.Abs(time);
+			TimeSpan span = TimeSpan.FromSeconds(time);
+			int[] data = DataFromTimeSpan(span);
+			string[] intervalCaptions = { "y", "d", "h", "m", "s" };
+			string result = isTimeNegative ? "- " : (explicitPositive ? "+ " : "");
+			for (int i = 0; i <= data.Length - 1; i++) {
+				if (data[i] != 0) {
+					for (int j = 0; j < valuesOfInterest; j++) {
+						if (j < data.Length - 1) {
+							result += $"{data[i + j]}{intervalCaptions[i + j]}";
+						}
+						if (j != valuesOfInterest - 1 && j != data.Length - 1) {
+							result += ", ";
+						}
+					}
+					break;
+				}
 			}
-			DateTime epoch = GetEpoch();
-			DateTime target = epoch.AddSeconds(time);
-			TimeSpan span = target - epoch;
-			return string.Format("{0}{1}{2}{3}{4}"
-				, isNegativeTime ? "- " : (explicitPositive ? "+ " : "")
-				, (valuesOfInterest >= 3 && span.Days != 0) ? string.Format("{0}d, ", span.Days) : ""
-				, (valuesOfInterest >= 2 && span.Hours != 0) ? string.Format("{0}h, ", span.Hours) : ""
-				, (valuesOfInterest >= 1 && span.Minutes != 0) ? string.Format("{0}m, ", span.Minutes) : ""
-				, valuesOfInterest >= 0 ? string.Format("{0}s", span.Seconds) : ""
-			);
+			if (result == "") {
+				return "0s";
+			}
+			return result;
 		}
 
 		public string PrintTime(double time, int valuesOfInterest, bool explicitPositive, bool logEnglish)
@@ -215,6 +224,18 @@ namespace RSSTimeFormatter
 			}
 		}
 		#endregion
+
+		private int[] DataFromTimeSpan(TimeSpan span)
+		{
+			return new int[]
+			{
+				(int)(span.TotalDays / 365),
+				span.Days,
+				span.Hours,
+				span.Minutes,
+				span.Seconds
+			};
+		}
 
 		protected bool IsInvalidTime(double time)
 		{

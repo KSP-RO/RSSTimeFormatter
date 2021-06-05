@@ -3,7 +3,7 @@ name: tagged-release
 # Controls when the action will run. 
 on:
   release:
-    types: [created,modified,published]
+    types: [published]
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -42,6 +42,7 @@ jobs:
           echo "Release dir: ${RELEASE_DIR}"
           mkdir -v "${RELEASE_DIR}"
           echo "::set-output name=release-dir::${RELEASE_DIR}"
+          cp -v -R "${GITHUB_WORKSPACE}/GameData" "${RELEASE_DIR}"
           zip ${RELEASE_DIR}/RSSDateTime-${{ github.event.release.tag_name }}.zip ${RUNNER_TEMP}/release/GameData ${RUNNER_TEMP}/release/GameData/RSSDateTime/* ${RUNNER_TEMP}/release/GameData/RSSDateTime/Plugins/RSSTimeFormatter.dll
 
       - name: release
@@ -49,4 +50,4 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          args: RSSDateTimeFormatter-${{ github.event.release.tag_name }}.zip        
+          args: ${{ steps.assemble-release.outputs.release-dir }}/RSSDateTimeFormatter-${{ github.event.release.tag_name }}.zip        

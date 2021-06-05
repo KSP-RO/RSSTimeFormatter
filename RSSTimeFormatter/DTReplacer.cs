@@ -11,14 +11,14 @@ namespace RSSTimeFormatter
 			var configs = GameDatabase.Instance.GetConfigs(node);
 			if (configs.Length > 1) {
 				Debug.LogError(
-					"Multiple `" + node + "` configurations, falling back to default");
+					"[RSSDT] Multiple `" + node + "` configurations, falling back to default");
 			}
 			else if (configs.Length == 1) {
 				ConfigNode config = configs[0].config;
 				var formats = config.GetValues(name);
 				if (formats.Length > 1) {
 					Debug.LogError(
-						"`" + node + "` configuration has multiple `" + name + "` entries, falling back to default");
+						"[RSSDT] `" + node + "` configuration has multiple `" + name + "` entries, falling back to default");
 				}
 				else if (formats.Length == 1) {
 					return formats[0];
@@ -29,7 +29,6 @@ namespace RSSTimeFormatter
 
 		public void Start()
 		{
-			Debug.Log("Replacing DateTime formatter");
 			// Since Unity overrides the CurrentCulture, we cannot rely on it to
 			// format dates in a way that the user will understand, see
 			// https://github.com/KSP-RO/RSSTimeFormatter/issues/2.
@@ -46,7 +45,7 @@ namespace RSSTimeFormatter
 					dateFormat = customDateFormat;
 				}
 				catch (FormatException) {
-					Debug.LogError("Invalid date format " + customDateFormat);
+					Debug.LogError("[RSSDT] Invalid date format " + customDateFormat);
 				}
 			}
 
@@ -54,7 +53,7 @@ namespace RSSTimeFormatter
 			string customEpoch = GetUniqueStringFromUniqueNode("epoch", "RSSTimeFormatter");
 			if (customEpoch != null) {
 				if (!DateTime.TryParse(customEpoch, out epoch)) {
-					Debug.LogError("Invalid epoch " + customEpoch);
+					Debug.LogError("[RSSDT] Invalid epoch " + customEpoch);
 				}
 			}
 

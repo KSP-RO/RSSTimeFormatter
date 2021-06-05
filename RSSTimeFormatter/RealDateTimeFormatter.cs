@@ -14,7 +14,6 @@ namespace RSSTimeFormatter
 		#region IDateTimeFormatter implementation
 		public string PrintTimeLong(double time)
 		{
-			Debug.Log("PrintTimeLong");
 			// short-circuit if invalid time passed
 			if (IsInvalidTime(time))
 				return InvalidTimeStr(time);
@@ -30,7 +29,6 @@ namespace RSSTimeFormatter
 		}
 		public string PrintTimeStamp(double time, bool days = false, bool years = false)
 		{
-			Debug.Log("PrintTimeStamp");
 			// short-circuit if invalid time passed
 			if (IsInvalidTime(time))
 				return InvalidTimeStr(time);

@@ -2,9 +2,9 @@ name: tagged-release
 
 # Controls when the action will run. 
 on:
-  release:
-    types: [published]
-
+  push:
+    tags: 'v*'
+    
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   tagged-release:

@@ -52,7 +52,8 @@ jobs:
           echo "::set-output name=release-dir::${RELEASE_DIR}"
           cp -v -R "${GITHUB_WORKSPACE}/GameData" "${RELEASE_DIR}"
           cp -v -R "${GITHUB_WORKSPACE}/RSSDateTime.version" "${RELEASE_DIR}/GameData/RSSDateTime/RSSDateTime.version"
-          zip ${RELEASE_DIR}/RSSDateTime-${{ github.event.release.tag_name }}.zip ${RUNNER_TEMP}/release/GameData ${RUNNER_TEMP}/release/GameData/RSSDateTime/* ${RUNNER_TEMP}/release/GameData/RSSDateTime/Plugins/RSSTimeFormatter.dll
+          cd ${RELEASE_DIR}
+          zip RSSDateTime-${{ github.event.release.tag_name }}.zip GameData GameData/RSSDateTime/* GameData/RSSDateTime/Plugins/RSSTimeFormatter.dll
           ls -lrt -d -1 "${RELEASE_DIR}"/{*,.*}
         
       - name: Upload package to release

@@ -44,12 +44,30 @@ jobs:
           mkdir -v "${RELEASE_DIR}"
           echo "::set-output name=release-dir::${RELEASE_DIR}"
           cp -v -R "${GITHUB_WORKSPACE}/GameData" "${RELEASE_DIR}"
-          zip ${RELEASE_DIR}/RSSDateTime-${{ github.event.release.tag_name }}.zip ${RUNNER_TEMP}/release/GameData ${RUNNER_TEMP}/release/GameData/RSSDateTime/* ${RUNNER_TEMP}/release/GameData/RSSDateTime/Plugins/RSSTimeFormatter.dll
+          zip ${RELEASE_DIR}/RSSDateTime.zip ${RUNNER_TEMP}/release/GameData ${RUNNER_TEMP}/release/GameData/RSSDateTime/* ${RUNNER_TEMP}/release/GameData/RSSDateTime/Plugins/RSSTimeFormatter.dll
           ls -lrt -d -1 "${RELEASE_DIR}"/{*,.*}
         
-      - name: release
-        uses: skx/github-action-publish-binaries@master
+      - name: Create release
+        id: create-release
+        uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          args: ${{ steps.assemble-release.outputs.release-dir }}/RSSDateTime-${{ github.event.release.tag_name }}.zip        
+          prerelease: true
+          draft: true
+          tag_name: ${{ github.ref }}
+          release_name: RSSDateTime Formatter ${{ github.ref }}
+          body: TODO
+      
+      - name: Upload package to release
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create-release.outputs.upload_url }}
+          asset_path: ${{ steps.assemble-release.outputs.release-dir }}RSSDateTime.zip
+          asset_name: RSSDateTime.zip
+          asset_content_type: application/zip
+      
+      - name: Print release url
+        run: echo "Release successful!  You can view it at ${{ steps.create-release.outputs.html_url }}"

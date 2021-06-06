@@ -30,8 +30,8 @@ build = int(version.split(".")[3])
 avc = {
 	"NAME" : "RSSDateTime",
 	"URL" : "http://ksp-avc.cybutek.net/version.php?id=294",
-	"DOWNLOAD" : "https://github.com/KSP-RO/RSSDateTime/releases/download/{}/RSSDateTime-{}.zip".format(args.tag[0],args.tag[0]),
-	"CHANGE_LOG_URL" : "https://raw.githubusercontent.com/KSP-RO/RSSDateTime/master/RELEASE_NOTES_RAW.txt",
+	"DOWNLOAD" : "https://github.com/KSP-RO/RSSTimeFormatter/releases/download/{}/RSSDateTime-{}.zip".format(args.tag[0],args.tag[0]),
+	"CHANGE_LOG_URL" : "https://raw.githubusercontent.com/KSP-RO/RSSTimeFormatter/master/RELEASE_NOTES_RAW.txt",
 	"VERSION" :
 	{
 		"MAJOR" : major,

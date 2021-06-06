@@ -65,7 +65,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create-release.outputs.upload_url }}
-          asset_path: ${{ steps.assemble-release.outputs.release-dir }}RSSDateTime.zip
+          asset_path: ${{ steps.assemble-release.outputs.release-dir }}/RSSDateTime.zip
           asset_name: RSSDateTime.zip
           asset_content_type: application/zip
       

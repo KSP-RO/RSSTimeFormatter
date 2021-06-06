@@ -34,6 +34,13 @@ jobs:
 
       - name: Build mod solution
         run: msbuild /p:Configuration=Release /p:ReferencePath="${{ steps.download-assemblies.outputs.ksp-dll-path }}" RSSTimeFormatter.sln
+        
+      - name: Setup python
+        uses: actions/setup-python@v2
+        
+      - name: Make metadata
+        run: |
+          python ${GITHUB_WORKSPACE}/makeMeta.py ${{ github.event.release.tag_name }}
 
       - name: Assemble release
         id: assemble-release
@@ -44,7 +51,8 @@ jobs:
           mkdir -v "${RELEASE_DIR}"
           echo "::set-output name=release-dir::${RELEASE_DIR}"
           cp -v -R "${GITHUB_WORKSPACE}/GameData" "${RELEASE_DIR}"
-          zip ${RELEASE_DIR}/RSSDateTime.zip ${RUNNER_TEMP}/release/GameData ${RUNNER_TEMP}/release/GameData/RSSDateTime/* ${RUNNER_TEMP}/release/GameData/RSSDateTime/Plugins/RSSTimeFormatter.dll
+          cp -v -R "${GITHUB_WORKSPACE}/RSSDateTime.version" "${RELEASE_DIR}/GameData/RSSDateTime/RSSDateTime.version"
+          zip ${RELEASE_DIR}/RSSDateTime-${{ github.event.release.tag_name }}.zip ${RUNNER_TEMP}/release/GameData ${RUNNER_TEMP}/release/GameData/RSSDateTime/* ${RUNNER_TEMP}/release/GameData/RSSDateTime/Plugins/RSSTimeFormatter.dll
           ls -lrt -d -1 "${RELEASE_DIR}"/{*,.*}
         
       - name: Upload package to release
@@ -53,9 +61,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ github.event.release.upload_url }}
-          asset_path: ${{ steps.assemble-release.outputs.release-dir }}/RSSDateTime.zip
-          asset_name: RSSDateTime.zip
+          asset_path: ${{ steps.assemble-release.outputs.release-dir }}/RSSDateTime-${{ github.event.release.tag_name }}.zip
+          asset_name: RSSDateTime-${{ github.event.release.tag_name }}.zip
           asset_content_type: application/zip
-      
-      - name: Print release url
-        run: echo "Release successful!  You can view it at ${{ steps.create-release.outputs.html_url }}"

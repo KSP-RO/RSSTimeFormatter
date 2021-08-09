@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using UnityEngine;
 
 namespace RSSTimeFormatter
 {
@@ -179,6 +175,7 @@ namespace RSSTimeFormatter
                 , includeTime ? string.Format("{0:D2}:{1:D2}:{2:D2}", target.Hour, target.Minute, target.Second) : ""
             );
         }
+        // This is chiefly used by the MET display in flight view.
         public string PrintDateCompact(double time, bool includeTime, bool includeSeconds = false)
         {
             if (IsInvalidTime(time))
@@ -187,9 +184,8 @@ namespace RSSTimeFormatter
             DateTime epoch = GetEpoch();
             DateTime target = epoch.AddSeconds(time);
 
-            return string.Format("{0}-{1} {2}{3}"
-                , target.Year
-                , target.DayOfYear
+            return string.Format("{0:yyyy-MM-dd} {1}{2}" // Always use ISO-8601 (stock is yyy-dd).
+                , target
                 , includeTime ? string.Format("{0:D2}:{1:D2}", target.Hour, target.Minute) : ""
                 , includeTime && includeSeconds ? string.Format(":{0:D2}", target.Second) : ""
             );

@@ -42,8 +42,8 @@ avc = {
 	"KSP_VERSION" :
 	{
 		"MAJOR" : 1,
-		"MINOR" : 10,
-		"PATCH" : 1
+		"MINOR" : 12,
+		"PATCH" : 2
 	}
 }
 with open("RSSDateTime.version", "w") as f:

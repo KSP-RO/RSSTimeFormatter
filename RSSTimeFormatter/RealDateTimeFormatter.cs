@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 
 namespace RSSTimeFormatter
 {
@@ -132,6 +133,11 @@ namespace RSSTimeFormatter
         }
         public string PrintDateDeltaCompact(double time, bool includeTime, bool includeSeconds, bool useAbs)
         {
+            return PrintDateDeltaCompact(time, includeTime, includeSeconds, useAbs, 5);
+        }
+
+        public string PrintDateDeltaCompact(double time, bool includeTime, bool includeSeconds, bool useAbs, int interestedPlaces)
+        {
             if (IsInvalidTime(time))
                 return InvalidTimeStr(time);
             if (time < 0 && useAbs)
@@ -143,13 +149,50 @@ namespace RSSTimeFormatter
             DateTime target = epoch.AddSeconds(time);
             TimeSpan span = target - epoch;
 
-            return string.Format("{0}{1}{2}{3}"
-                , span.Days > 0 ? string.Format("{0}{1} ", span.Days, "d") : ""
-                , span.Hours > 0 && includeTime ? string.Format("{0}{1} ", span.Hours, "h") : ""
-                , span.Minutes > 0 && includeTime ? string.Format("{0}{1} ", span.Minutes, "m") : ""
-                , span.Seconds > 0 && includeTime && includeSeconds ? string.Format("{0}{1}", span.Seconds, "s") : ""
-            );
+            // interestedPlaces cheat sheet:
+            // 5 - seconds
+            // 4 - minutes
+            // 3 - hours
+            // 2 - days
+            // 1 - years
+            // Note: Printing out the difference in years isn't supported. Instead for levels 1 and 2 we will always print Days.
+
+            StringBuilder sb = StringBuilderCache.Acquire(256);
+            if (span.Days > 0 && interestedPlaces >= 1)
+            {
+                sb.AppendFormat("{0}d", span.Days);
+            }
+
+            if (includeTime)
+            {
+                if (span.Hours > 0 && interestedPlaces >= 3)
+                {
+                    if (sb.Length != 0)
+                        sb.Append(" ");
+                    sb.AppendFormat("{0}h", span.Hours);
+                }
+
+                if (span.Minutes > 0 && interestedPlaces >= 4)
+                {
+                    if (sb.Length != 0)
+                        sb.Append(" ");
+                    sb.AppendFormat("{0}m", span.Minutes);
+                }
+
+                if (includeSeconds && span.Seconds > 0 && interestedPlaces >= 5)
+                {
+                    if (sb.Length != 0)
+                        sb.Append(" ");
+                    sb.AppendFormat("{0}s", span.Seconds);
+                }
+            }
+
+            if (sb.Length == 0)
+                sb.AppendFormat("0{0}", includeTime ? (includeSeconds ? "s" : "m") : "d");
+
+            return sb.ToStringAndRelease();
         }
+
         public string PrintDate(double time, bool includeTime, bool includeSeconds = false)
         {
             if (IsInvalidTime(time))

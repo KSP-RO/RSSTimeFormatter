@@ -5,8 +5,18 @@ namespace RSSTimeFormatter
 {
     public class RealDateTimeFormatter : IDateTimeFormatter
     {
-        private string dateFormat;
-        private DateTime epoch;
+        private readonly string dateFormat;
+        private readonly DateTime epoch;
+
+        public RealDateTimeFormatter()
+        {
+        }
+
+        public RealDateTimeFormatter(string dateFormat, DateTime epoch)
+        {
+            this.dateFormat = dateFormat;
+            this.epoch = epoch;
+        }
 
         #region IDateTimeFormatter implementation
         public string PrintTimeLong(double time)
@@ -24,6 +34,7 @@ namespace RSSTimeFormatter
                 , span.Seconds, span.Seconds == 1 ? "second" : "seconds"
             );
         }
+
         public string PrintTimeStamp(double time, bool days = false, bool years = false)
         {
             // short-circuit if invalid time passed
@@ -39,6 +50,7 @@ namespace RSSTimeFormatter
                 , span.Seconds
             );
         }
+
         public string PrintTimeStampCompact(double time, bool days = false, bool years = false)
         {
             // short-circuit if invalid time passed
@@ -58,6 +70,7 @@ namespace RSSTimeFormatter
                 , span.Seconds
             );
         }
+
         public string PrintTime(double time, int valuesOfInterest, bool explicitPositive)
         {
             // This is a downright strange and confusing method but as I understand it
@@ -105,12 +118,13 @@ namespace RSSTimeFormatter
             TimeSpan span = target - epoch;
             return string.Format("{0}{1}{2:D2}:{3:D2}:{4:D2}"
                 , isNegativeTime ? "- " : (explicitPositive ? "+ " : "")
-                , (span.Days != 0 ? span.Days.ToString() : "")
+                , span.Days != 0 ? span.Days.ToString() : ""
                 , span.Hours
                 , span.Minutes
                 , span.Seconds
             );
         }
+
         public string PrintDateDelta(double time, bool includeTime, bool includeSeconds, bool useAbs)
         {
             if (IsInvalidTime(time))
@@ -131,6 +145,7 @@ namespace RSSTimeFormatter
                 , span.Seconds > 0 && includeTime && includeSeconds ? string.Format("{0} {1}", span.Seconds, span.Seconds == 1 ? "second" : "seconds") : ""
             );
         }
+
         public string PrintDateDeltaCompact(double time, bool includeTime, bool includeSeconds, bool useAbs)
         {
             return PrintDateDeltaCompact(time, includeTime, includeSeconds, useAbs, 5);
@@ -205,6 +220,7 @@ namespace RSSTimeFormatter
                 , includeTime ? string.Format("{0:D2}:{1:D2}:{2:D2}", target.Hour, target.Minute, target.Second) : ""
             );
         }
+
         public string PrintDateNew(double time, bool includeTime)
         {
             if (IsInvalidTime(time))
@@ -218,6 +234,7 @@ namespace RSSTimeFormatter
                 , includeTime ? string.Format("{0:D2}:{1:D2}:{2:D2}", target.Hour, target.Minute, target.Second) : ""
             );
         }
+
         // This is chiefly used by the MET display in flight view.
         public string PrintDateCompact(double time, bool includeTime, bool includeSeconds = false)
         {
@@ -233,35 +250,18 @@ namespace RSSTimeFormatter
                 , includeTime && includeSeconds ? string.Format(":{0:D2}", target.Second) : ""
             );
         }
-        public int Minute {
-            get {
-                return 60;
-            }
-        }
-        public int Hour {
-            get {
-                return 3600;
-            }
-        }
-        public int Day {
-            get {
-                return 86400;
-            }
-        }
-        public int Year {
-            get {
-                return 31536000;
-            }
-        }
+
+        public int Minute => 60;
+        public int Hour => 3600;
+        public int Day => 86400;
+        public int Year => 31536000;
         #endregion
 
         protected bool IsInvalidTime(double time)
         {
-            if (double.IsNaN(time) || double.IsPositiveInfinity(time) || double.IsNegativeInfinity(time))
-                return true;
-            else
-                return false;
+            return double.IsNaN(time) || double.IsPositiveInfinity(time) || double.IsNegativeInfinity(time);
         }
+
         protected string InvalidTimeStr(double time)
         {
             if (double.IsNaN(time)) {
@@ -284,16 +284,6 @@ namespace RSSTimeFormatter
         protected DateTime GetEpoch()
         {
             return epoch;
-        }
-
-        public RealDateTimeFormatter()
-        {
-        }
-
-        public RealDateTimeFormatter(string dateFormat, DateTime epoch)
-        {
-            this.dateFormat = dateFormat;
-            this.epoch = epoch;
         }
     }
 }

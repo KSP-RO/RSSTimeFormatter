@@ -9,18 +9,20 @@ namespace RSSTimeFormatter
         public static string GetUniqueStringFromUniqueNode(string name, string node)
         {
             var configs = GameDatabase.Instance.GetConfigs(node);
-            if (configs.Length > 1) {
-                Debug.LogError(
-                    "[RSSDT] Multiple `" + node + "` configurations, falling back to default");
+            if (configs.Length > 1)
+            {
+                Debug.LogError($"[RSSDT] Multiple `{node}` configurations, falling back to default");
             }
-            else if (configs.Length == 1) {
+            else if (configs.Length == 1)
+            {
                 ConfigNode config = configs[0].config;
-                var formats = config.GetValues(name);
-                if (formats.Length > 1) {
-                    Debug.LogError(
-                        "[RSSDT] `" + node + "` configuration has multiple `" + name + "` entries, falling back to default");
+                string[] formats = config.GetValues(name);
+                if (formats.Length > 1)
+                {
+                    Debug.LogError($"[RSSDT] `{node}` configuration has multiple `{name}` entries, falling back to default");
                 }
-                else if (formats.Length == 1) {
+                else if (formats.Length == 1)
+                {
                     return formats[0];
                 }
             }
@@ -38,27 +40,28 @@ namespace RSSTimeFormatter
             // slashes.
             string dateFormat = "yyyy-MM-dd";
             string customDateFormat = GetUniqueStringFromUniqueNode("dateFormat", "RSSTimeFormatter");
-            if (customDateFormat != null) {
+            if (customDateFormat != null)
+            {
                 // Validate the format string.
-                try {
+                try
+                {
                     string.Format("{0:" + customDateFormat + "}", new DateTime(1957, 10, 04));
                     dateFormat = customDateFormat;
                 }
-                catch (FormatException) {
+                catch (FormatException)
+                {
                     Debug.LogError("[RSSDT] Invalid date format " + customDateFormat);
                 }
             }
 
             DateTime epoch = new DateTime(1951, 01, 01);
             string customEpoch = GetUniqueStringFromUniqueNode("epoch", "RSSTimeFormatter");
-            if (customEpoch != null) {
-                if (!DateTime.TryParse(customEpoch, out epoch)) {
-                    Debug.LogError("[RSSDT] Invalid epoch " + customEpoch);
-                }
+            if (customEpoch != null && !DateTime.TryParse(customEpoch, out epoch))
+            {
+                Debug.LogError("[RSSDT] Invalid epoch " + customEpoch);
             }
 
             KSPUtil.dateTimeFormatter = new RealDateTimeFormatter(dateFormat, epoch);
         }
     }
 }
-

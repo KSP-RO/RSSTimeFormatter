@@ -8,7 +8,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{37D512E6-D1A7-47A1-A91D-3C99479F9D39}"
 	ProjectSection(SolutionItems) = preProject
 		GameData\RSSDateTime\localization.cfg = GameData\RSSDateTime\localization.cfg
-		unicode-license.txt = unicode-license.txt
+		GameData\RSSDateTime\unicode-license.txt = GameData\RSSDateTime\unicode-license.txt
 	EndProjectSection
 EndProject
 Global

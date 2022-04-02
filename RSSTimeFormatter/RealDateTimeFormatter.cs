@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.Text;
 
 namespace RSSTimeFormatter
@@ -9,7 +10,7 @@ namespace RSSTimeFormatter
         private readonly string timeFormat;
         private readonly string dateTimeFormat;
         private readonly DateTime epoch;
-        private readonly System.Globalization.CultureInfo culture;
+        private readonly CultureInfo culture;
 
         public RealDateTimeFormatter()
         {
@@ -17,11 +18,11 @@ namespace RSSTimeFormatter
 
         public RealDateTimeFormatter(string dateFormat, string timeFormat, string dateTimeFormat, DateTime epoch)
         {
-            this.dateFormat = dateFormat;
-            this.timeFormat = timeFormat;
+            this.dateFormat = "{0:" + dateFormat + "}";
+            this.timeFormat = "{0:" + timeFormat + "}";
             this.dateTimeFormat = dateTimeFormat;
             this.epoch = epoch;
-            culture = new System.Globalization.CultureInfo(KSP.Localization.Localizer.CurrentLanguage);
+            culture = new CultureInfo(KSP.Localization.Localizer.CurrentLanguage);
         }
 
         #region IDateTimeFormatter implementation
@@ -216,12 +217,12 @@ namespace RSSTimeFormatter
 
         private string FormatDate(DateTime t)
         {
-            return string.Format(culture, "{0:" + dateFormat + "}", t);
+            return string.Format(culture, dateFormat, t);
         }
 
         private string FormatTime(DateTime t)
         {
-            return string.Format(culture, "{0:" + timeFormat + "}", t);
+            return string.Format(culture, timeFormat, t);
         }
 
         private string FormatDateTime(DateTime t)

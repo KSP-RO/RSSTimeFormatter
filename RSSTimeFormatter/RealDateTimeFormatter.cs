@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.Text;
 
 namespace RSSTimeFormatter
@@ -6,16 +7,22 @@ namespace RSSTimeFormatter
     public class RealDateTimeFormatter : IDateTimeFormatter
     {
         private readonly string dateFormat;
+        private readonly string timeFormat;
+        private readonly string dateTimeFormat;
         private readonly DateTime epoch;
+        private readonly CultureInfo culture;
 
         public RealDateTimeFormatter()
         {
         }
 
-        public RealDateTimeFormatter(string dateFormat, DateTime epoch)
+        public RealDateTimeFormatter(string dateFormat, string timeFormat, string dateTimeFormat, DateTime epoch)
         {
-            this.dateFormat = dateFormat;
+            this.dateFormat = "{0:" + dateFormat + "}";
+            this.timeFormat = "{0:" + timeFormat + "}";
+            this.dateTimeFormat = dateTimeFormat;
             this.epoch = epoch;
+            culture = new CultureInfo(KSP.Localization.Localizer.CurrentLanguage);
         }
 
         #region IDateTimeFormatter implementation
@@ -208,6 +215,21 @@ namespace RSSTimeFormatter
             return sb.ToStringAndRelease();
         }
 
+        private string FormatDate(DateTime t)
+        {
+            return string.Format(culture, dateFormat, t);
+        }
+
+        private string FormatTime(DateTime t)
+        {
+            return string.Format(culture, timeFormat, t);
+        }
+
+        private string FormatDateTime(DateTime t)
+        {
+            return string.Format(culture, dateTimeFormat, FormatTime(t), FormatDate(t));
+        }
+
         public string PrintDate(double time, bool includeTime, bool includeSeconds = false)
         {
             if (IsInvalidTime(time))
@@ -215,10 +237,7 @@ namespace RSSTimeFormatter
 
             DateTime epoch = GetEpoch();
             DateTime target = epoch.AddSeconds(time);
-            return string.Format("{0:" + dateFormat + "} {1}"
-                , target
-                , includeTime ? string.Format("{0:D2}:{1:D2}:{2:D2}", target.Hour, target.Minute, target.Second) : ""
-            );
+            return includeTime ? FormatDateTime(target) : FormatDate(target);
         }
 
         public string PrintDateNew(double time, bool includeTime)
@@ -228,11 +247,7 @@ namespace RSSTimeFormatter
 
             DateTime epoch = GetEpoch();
             DateTime target = epoch.AddSeconds(time);
-
-            return string.Format("{0:" + dateFormat + "} {1}"
-                , target
-                , includeTime ? string.Format("{0:D2}:{1:D2}:{2:D2}", target.Hour, target.Minute, target.Second) : ""
-            );
+            return includeTime ? FormatDateTime(target) : FormatDate(target);
         }
 
         // This is chiefly used by the MET display in flight view.
@@ -244,6 +259,8 @@ namespace RSSTimeFormatter
             DateTime epoch = GetEpoch();
             DateTime target = epoch.AddSeconds(time);
 
+            // TODO(egg): This format should probably be configurable too, even
+            // if we keep this default.
             return string.Format("{0:yyyy-MM-dd} {1}{2}" // Always use ISO-8601 (stock is yyy-dd).
                 , target
                 , includeTime ? string.Format("{0:D2}:{1:D2}", target.Hour, target.Minute) : ""

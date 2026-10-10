@@ -138,19 +138,22 @@ namespace RSSTimeFormatter
                 return InvalidTimeStr(time);
             if (time < 0 && useAbs)
                 time = Math.Abs(time);
-            if (time == 0d)
-                return string.Format("0 {0}", includeTime ? (includeSeconds ? "seconds" : "minutes") : "days");
 
             DateTime epoch = GetEpoch();
             DateTime target = epoch.AddSeconds(time);
             TimeSpan span = target - epoch;
 
-            return string.Format("{0}{1}{2}{3}"
+            string delta = string.Format("{0}{1}{2}{3}"
                 , span.Days > 0 ? string.Format("{0} {1} ", span.Days, span.Days == 1 ? "day" : "days") : ""
                 , span.Hours > 0 && includeTime ? string.Format("{0} {1} ", span.Hours, span.Hours == 1 ? "hour" : "hours") : ""
                 , span.Minutes > 0 && includeTime ? string.Format("{0} {1} ", span.Minutes, span.Minutes == 1 ? "minute" : "minutes") : ""
                 , span.Seconds > 0 && includeTime && includeSeconds ? string.Format("{0} {1}", span.Seconds, span.Seconds == 1 ? "second" : "seconds") : ""
             );
+
+            if (delta.Length == 0)
+                return string.Format("0 {0}", includeTime ? (includeSeconds ? "seconds" : "minutes") : "days");
+
+            return delta;
         }
 
         public string PrintDateDeltaCompact(double time, bool includeTime, bool includeSeconds, bool useAbs)
